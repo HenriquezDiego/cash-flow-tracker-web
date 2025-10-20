@@ -44,22 +44,50 @@
           </p>
           <div class="mt-2 flex justify-end gap-2">
             <button
-              class="p-1.5 rounded-md border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-primary-700"
-              title="Editar"
+              class="p-1.5 rounded-md border border-gray-200 bg-white text-gray-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 transition-all duration-300 ease-out hover:scale-110 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 opacity-70 hover:opacity-100 relative group"
+              :aria-label="`Editar gasto fijo: ${fixedExpense.name}`"
               @click="editFixedExpense(fixedExpense)"
             >
-              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-6 14h10a2 2 0 002-2v-5.586a1 1 0 00-.293-.707l-6.414-6.414A1 1 0 0011.586 4H6a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              <svg 
+                class="h-4 w-4 transition-all duration-300 ease-out"
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
               </svg>
+              
+              <!-- Tooltip -->
+              <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-1.5 py-0.5 bg-gray-900 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                Editar
+                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-3 border-r-3 border-t-3 border-transparent border-t-gray-900"></div>
+              </div>
+              
+              <span class="sr-only">Editar gasto fijo</span>
             </button>
             <button
-              class="p-1.5 rounded-md border border-gray-200 bg-white text-red-600 hover:bg-red-50"
-              title="Eliminar"
+              class="p-1.5 rounded-md border border-gray-200 bg-white text-red-600 hover:bg-red-50 transition-all duration-300 ease-out hover:scale-110 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 opacity-70 hover:opacity-100 relative group"
+              :aria-label="`Eliminar gasto fijo: ${fixedExpense.name}`"
               @click="onDeleteFixed(fixedExpense)"
             >
-              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <svg 
+                class="h-4 w-4 transition-all duration-300 ease-out"
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                aria-hidden="true"
+              >
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m-7 0V5a2 2 0 012-2h2a2 2 0 012 2v2"/>
               </svg>
+              
+              <!-- Tooltip -->
+              <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-1.5 py-0.5 bg-gray-900 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                Eliminar
+                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-3 border-r-3 border-t-3 border-transparent border-t-gray-900"></div>
+              </div>
+              
+              <span class="sr-only">Eliminar gasto fijo</span>
             </button>
           </div>
         </div>
@@ -115,7 +143,7 @@
             class="btn-primary"
             :class="{ 'opacity-50 cursor-not-allowed': loading }"
           >
-            {{ loading ? 'Generando...' : 'Generar Gastos' }}
+            {{ loading ? 'Generando...' : 'Generar' }}
           </button>
         </div>
       </div>
