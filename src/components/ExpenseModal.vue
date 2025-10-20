@@ -185,7 +185,7 @@
                     <span class="w-10 h-6 rounded-full bg-gray-200 peer-checked:bg-primary-600 relative transition-colors">
                       <span class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4"></span>
                     </span>
-                    <span class="text-sm font-medium text-gray-700">Es gasto de crédito</span>
+                    <span class="text-sm font-medium text-gray-700">Cargar a tarjeta</span>
                   </label>
                 </div>
 
@@ -491,10 +491,27 @@ const handleShortcutSave = async (e) => {
 
 const loading = computed(() => expenseStore.loading)
 
-// Watcher para limpiar el día del mes cuando se desmarca como fijo
+// Watcher para manejar el día del mes cuando se marca/desmarca como fijo
 watch(() => form.isFixed, (newValue) => {
-  if (!newValue) {
+  if (newValue) {
+    // Si se marca como fijo, tomar el día de la fecha seleccionada
+    if (form.date) {
+      // Extraer el día directamente del string de fecha (formato: yyyy-MM-dd)
+      const day = parseInt(form.date.split('-')[2])
+      form.dayOfMonth = String(day)
+    }
+  } else {
+    // Si se desmarca como fijo, limpiar el día del mes
     form.dayOfMonth = ''
+  }
+})
+
+// Watcher para actualizar el día del mes cuando cambia la fecha (solo si es fijo)
+watch(() => form.date, (newDate) => {
+  if (form.isFixed && newDate) {
+    // Extraer el día directamente del string de fecha (formato: yyyy-MM-dd)
+    const day = parseInt(newDate.split('-')[2])
+    form.dayOfMonth = String(day)
   }
 })
 

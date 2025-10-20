@@ -56,7 +56,7 @@
 
       <div class="flex items-center space-x-3">
         <input id="isCredit" v-model="form.isCredit" type="checkbox" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded" />
-        <label for="isCredit" class="text-sm font-medium text-gray-700">Es gasto de crédito</label>
+        <label for="isCredit" class="text-sm font-medium text-gray-700">Cargar a tarjeta</label>
       </div>
 
       <div v-if="form.isCredit" class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -142,7 +142,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed, watch } from 'vue'
+import { ref, reactive, onMounted, computed, watch, nextTick } from 'vue'
 import { format } from 'date-fns'
 import { useExpenseStore } from '../stores/expenseStore'
 import { useDebtStore } from '../stores/debtStore'
@@ -224,10 +224,27 @@ const handleSubmit = async () => {
 
 const loading = computed(() => expenseStore.loading)
 
-// Watcher para limpiar el día del mes cuando se desmarca como fijo
+// Watcher para manejar el día del mes cuando se marca/desmarca como fijo
 watch(() => form.isFixed, (newValue) => {
-  if (!newValue) {
+  if (newValue) {
+    // Si se marca como fijo, tomar el día de la fecha seleccionada
+    if (form.date) {
+      // Extraer el día directamente del string de fecha (formato: yyyy-MM-dd)
+      const day = parseInt(form.date.split('-')[2])
+      form.dayOfMonth = String(day)
+    }
+  } else {
+    // Si se desmarca como fijo, limpiar el día del mes
     form.dayOfMonth = ''
+  }
+})
+
+// Watcher para actualizar el día del mes cuando cambia la fecha (solo si es fijo)
+watch(() => form.date, (newDate) => {
+  if (form.isFixed && newDate) {
+    // Extraer el día directamente del string de fecha (formato: yyyy-MM-dd)
+    const day = parseInt(newDate.split('-')[2])
+    form.dayOfMonth = String(day)
   }
 })
 
