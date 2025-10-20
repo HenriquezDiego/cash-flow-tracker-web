@@ -23,10 +23,10 @@ export const useDebtStore = defineStore('debt', () => {
   // Getters computados
   const activeDebts = computed(() => debts.value.filter(debt => debt.active))
   const totalBalance = computed(() => 
-    debts.value.reduce((sum, debt) => sum + (Number(debt.balance) || 0), 0)
+    activeDebts.value.reduce((sum, debt) => sum + (Number(debt.balance) || 0), 0)
   )
   const totalCreditLimit = computed(() => 
-    debts.value.reduce((sum, debt) => sum + (Number(debt.creditLimit) || 0), 0)
+    activeDebts.value.reduce((sum, debt) => sum + (Number(debt.creditLimit) || 0), 0)
   )
   const utilizationRate = computed(() => 
     totalCreditLimit.value > 0 ? (totalBalance.value / totalCreditLimit.value) * 100 : 0

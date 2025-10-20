@@ -35,8 +35,12 @@
     <div
       ref="cardRef"
       :class="[
-        'relative bg-white border border-gray-200 rounded-lg p-4 shadow-sm transition-all duration-500 ease-out hover:shadow-xl hover:scale-[1.02] hover:-translate-y-1 cursor-pointer touch-pan-y group',
+        'relative rounded-lg p-4 shadow-sm transition-all duration-500 ease-out cursor-pointer touch-pan-y group',
         {
+          // Estilos para tarjetas activas
+          'bg-white border border-gray-200 hover:shadow-xl hover:scale-[1.02] hover:-translate-y-1': credit.active,
+          // Estilos para tarjetas desactivadas
+          'bg-gray-50 border border-gray-300 opacity-60': !credit.active,
           'transition-transform duration-200 ease-out': isDragging,
           'shadow-md scale-[1.005] -translate-y-0.5': shouldShowMobileAnimations
         }
@@ -64,7 +68,12 @@
                 />
           </div>
           <div class="flex-1">
-            <h3 class="font-medium text-gray-900 text-sm transition-all duration-300 ease-out hover:text-gray-700 group-hover:scale-105" :class="{ 'text-gray-700': shouldShowMobileAnimations }">
+            <h3 class="font-medium text-sm transition-all duration-300 ease-out group-hover:scale-105" 
+                :class="{ 
+                  'text-gray-900 hover:text-gray-700': credit.active,
+                  'text-gray-500': !credit.active,
+                  'text-gray-700': shouldShowMobileAnimations && credit.active
+                }">
               {{ credit.name }}
             </h3>
             <div class="flex items-center space-x-2 mt-1">
@@ -89,14 +98,24 @@
       <!-- Información principal -->
       <div class="grid grid-cols-2 gap-3 mb-3">
         <div>
-          <div class="text-xs text-gray-500">Emisor</div>
-          <div class="text-sm font-medium text-gray-900 transition-all duration-300 ease-out hover:text-gray-700" :class="{ 'text-gray-700': shouldShowMobileAnimations }">
+          <div class="text-xs" :class="credit.active ? 'text-gray-500' : 'text-gray-400'">Emisor</div>
+          <div class="text-sm font-medium transition-all duration-300 ease-out" 
+               :class="{ 
+                 'text-gray-900 hover:text-gray-700': credit.active,
+                 'text-gray-500': !credit.active,
+                 'text-gray-700': shouldShowMobileAnimations && credit.active
+               }">
             {{ credit.issuer || '-' }}
           </div>
         </div>
         <div>
-          <div class="text-xs text-gray-500">Límite</div>
-          <div class="text-sm font-medium text-gray-900 transition-all duration-300 ease-out hover:text-gray-700" :class="{ 'text-gray-700': shouldShowMobileAnimations }">
+          <div class="text-xs" :class="credit.active ? 'text-gray-500' : 'text-gray-400'">Límite</div>
+          <div class="text-sm font-medium transition-all duration-300 ease-out" 
+               :class="{ 
+                 'text-gray-900 hover:text-gray-700': credit.active,
+                 'text-gray-500': !credit.active,
+                 'text-gray-700': shouldShowMobileAnimations && credit.active
+               }">
             {{ formatCurrency(credit.creditLimit) }}
           </div>
         </div>
@@ -105,15 +124,22 @@
       <!-- Saldo con barra de progreso -->
       <div class="mb-3">
         <div class="flex justify-between items-center mb-1">
-          <span class="text-xs text-gray-500">Saldo actual</span>
-          <span class="text-sm font-semibold text-gray-900 transition-all duration-300 ease-out hover:text-gray-700 hover:scale-105" :class="{ 'text-gray-700 scale-102': shouldShowMobileAnimations }">
+          <span class="text-xs" :class="credit.active ? 'text-gray-500' : 'text-gray-400'">Saldo actual</span>
+          <span class="text-sm font-semibold transition-all duration-300 ease-out hover:scale-105" 
+                :class="{ 
+                  'text-gray-900 hover:text-gray-700': credit.active,
+                  'text-gray-500': !credit.active,
+                  'text-gray-700 scale-102': shouldShowMobileAnimations && credit.active
+                }">
             {{ formatCurrency(credit.balance) }}
           </span>
         </div>
-        <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden group-hover:bg-gray-200 transition-colors duration-300">
+        <div class="h-2 w-full rounded-full overflow-hidden transition-colors duration-300" 
+             :class="credit.active ? 'bg-gray-100 group-hover:bg-gray-200' : 'bg-gray-300'">
           <div
-            class="h-full bg-gradient-to-r from-primary-500 to-primary-600 transition-all duration-700 ease-out group-hover:from-primary-600 group-hover:to-primary-700"
-            :style="{ width: getUtilizationWidth(credit.balance, credit.creditLimit) }"
+            class="h-full transition-all duration-700 ease-out"
+            :class="credit.active ? 'bg-gradient-to-r from-primary-500 to-primary-600 group-hover:from-primary-600 group-hover:to-primary-700' : 'bg-gray-400'"
+            :style="{ width: credit.active ? getUtilizationWidth(credit.balance, credit.creditLimit) : '0%' }"
           ></div>
         </div>
       </div>
@@ -121,14 +147,24 @@
       <!-- Fechas -->
       <div class="grid grid-cols-2 gap-3 mb-4">
         <div>
-          <div class="text-xs text-gray-500">Día de pago</div>
-          <div class="text-sm font-medium text-gray-900 transition-all duration-300 ease-out hover:text-gray-700" :class="{ 'text-gray-700': shouldShowMobileAnimations }">
+          <div class="text-xs" :class="credit.active ? 'text-gray-500' : 'text-gray-400'">Día de pago</div>
+          <div class="text-sm font-medium transition-all duration-300 ease-out" 
+               :class="{ 
+                 'text-gray-900 hover:text-gray-700': credit.active,
+                 'text-gray-500': !credit.active,
+                 'text-gray-700': shouldShowMobileAnimations && credit.active
+               }">
             {{ credit.dueDay || '-' }}
           </div>
         </div>
         <div>
-          <div class="text-xs text-gray-500">Día de corte</div>
-          <div class="text-sm font-medium text-gray-900 transition-all duration-300 ease-out hover:text-gray-700" :class="{ 'text-gray-700': shouldShowMobileAnimations }">
+          <div class="text-xs" :class="credit.active ? 'text-gray-500' : 'text-gray-400'">Día de corte</div>
+          <div class="text-sm font-medium transition-all duration-300 ease-out" 
+               :class="{ 
+                 'text-gray-900 hover:text-gray-700': credit.active,
+                 'text-gray-500': !credit.active,
+                 'text-gray-700': shouldShowMobileAnimations && credit.active
+               }">
             {{ credit.cutOffDay || '-' }}
           </div>
         </div>

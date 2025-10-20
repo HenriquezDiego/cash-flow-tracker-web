@@ -97,7 +97,14 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 bg-white">
-              <tr v-for="(d, index) in debts" :key="d.id" class="hover:bg-gray-50 transition-all duration-300 ease-out hover:shadow-sm group animate-in slide-in-from-left-4 fade-in" :style="{ animationDelay: `${index * 50}ms` }">
+              <tr v-for="(d, index) in debts" :key="d.id" 
+                  :class="[
+                    'transition-all duration-300 ease-out group animate-in slide-in-from-left-4 fade-in',
+                    d.active 
+                      ? 'hover:bg-gray-50 hover:shadow-sm' 
+                      : 'bg-gray-50 opacity-90'
+                  ]" 
+                  :style="{ animationDelay: `${index * 50}ms` }">
                 <td class="px-3 py-2">
                   <div class="flex items-center space-x-3">
                     <div class="flex-shrink-0">
@@ -107,30 +114,31 @@
                 />
                     </div>
                     <div class="flex-1">
-                      <div class="font-medium">{{ d.name }}</div>
-                      <div class="flex items-center space-x-2 text-xs text-gray-500">
+                      <div class="font-medium" :class="d.active ? 'text-gray-900' : 'text-gray-500'">{{ d.name }}</div>
+                      <div class="flex items-center space-x-2 text-xs" :class="d.active ? 'text-gray-500' : 'text-gray-400'">
                         <span v-if="d.brand" class="badge" 
                               :style="{ backgroundColor: getCardTypeColor(d.brand) + '20', color: getCardTypeColor(d.brand) }">
                           {{ d.brand }}
                         </span>
-                        <span v-if="d.maskPan" class="text-gray-400">•••• {{ d.maskPan }}</span>
+                        <span v-if="d.maskPan" :class="d.active ? 'text-gray-400' : 'text-gray-300'">•••• {{ d.maskPan }}</span>
                       </div>
                     </div>
                   </div>
                 </td>
-                <td class="px-3 py-2">{{ d.issuer }}</td>
-                <td class="px-3 py-2 text-right">{{ formatCurrency(d.creditLimit) }}</td>
+                <td class="px-3 py-2" :class="d.active ? 'text-gray-900' : 'text-gray-500'">{{ d.issuer }}</td>
+                <td class="px-3 py-2 text-right" :class="d.active ? 'text-gray-900' : 'text-gray-500'">{{ formatCurrency(d.creditLimit) }}</td>
                 <td class="px-3 py-2 text-right">
-                  <div class="text-right">{{ formatCurrency(d.balance) }}</div>
-                  <div class="mt-1 h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                  <div class="text-right" :class="d.active ? 'text-gray-900' : 'text-gray-500'">{{ formatCurrency(d.balance) }}</div>
+                  <div class="mt-1 h-1.5 w-full rounded-full overflow-hidden" :class="d.active ? 'bg-gray-100' : 'bg-gray-200'">
                     <div
-                      class="h-full bg-primary-600"
-                      :style="{ width: getUtilizationWidth(d.balance, d.creditLimit) }"
+                      class="h-full"
+                      :class="d.active ? 'bg-primary-600' : 'bg-gray-400'"
+                      :style="{ width: d.active ? getUtilizationWidth(d.balance, d.creditLimit) : '0%' }"
                     ></div>
                   </div>
                 </td>
-                <td class="px-3 py-2 text-center">{{ d.dueDay || '-' }}</td>
-                <td class="px-3 py-2 text-center">{{ d.cutOffDay || '-' }}</td>
+                <td class="px-3 py-2 text-center" :class="d.active ? 'text-gray-900' : 'text-gray-500'">{{ d.dueDay || '-' }}</td>
+                <td class="px-3 py-2 text-center" :class="d.active ? 'text-gray-900' : 'text-gray-500'">{{ d.cutOffDay || '-' }}</td>
                 <td class="px-3 py-2 text-center">
                   <span :class="d.active ? 'badge badge-success' : 'badge badge-gray'">{{ d.active ? 'Activa' : 'Inactiva' }}</span>
                 </td>
