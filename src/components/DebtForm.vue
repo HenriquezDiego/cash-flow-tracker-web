@@ -25,7 +25,6 @@
           id="debt-name"
           ref="nameInput"
           v-model="form.name" 
-          required 
           class="input-field h-10" 
           :class="{ 'border-red-300 focus:ring-red-500 focus:border-red-500': errors.some(e => e.includes('nombre')) }"
           placeholder="Tarjeta Visa BBVA" 
@@ -42,6 +41,7 @@
           id="debt-issuer"
           v-model="form.issuer" 
           class="input-field h-10" 
+          :class="{ 'border-red-300 focus:ring-red-500 focus:border-red-500': errors.some(e => e.includes('emisor')) }"
           placeholder="BBVA" 
         />
       </div>
@@ -62,8 +62,6 @@
         <input 
           id="debt-mask-pan"
           v-model="form.maskPan" 
-          maxlength="4" 
-          pattern="[0-9]{4}"
           class="input-field h-10" 
           :class="{ 'border-red-300 focus:ring-red-500 focus:border-red-500': errors.some(e => e.includes('máscara')) }"
           placeholder="1234"
@@ -79,11 +77,10 @@
           id="debt-cutoff-day"
           v-model.number="form.cutOffDay" 
           type="number" 
-          min="1" 
-          max="31" 
           class="input-field h-10" 
           :class="{ 'border-red-300 focus:ring-red-500 focus:border-red-500': errors.some(e => e.includes('corte')) }"
           placeholder="25"
+          @input="validateDayInput"
         />
         <p class="mt-1 text-xs text-gray-500">Día del mes (1-31)</p>
       </div>
@@ -94,11 +91,10 @@
           id="debt-due-day"
           v-model.number="form.dueDay" 
           type="number" 
-          min="1" 
-          max="31" 
           class="input-field h-10" 
           :class="{ 'border-red-300 focus:ring-red-500 focus:border-red-500': errors.some(e => e.includes('pago')) }"
           placeholder="10"
+          @input="validateDayInput"
         />
         <p class="mt-1 text-xs text-gray-500">Día del mes (1-31)</p>
       </div>
@@ -114,7 +110,6 @@
             id="debt-credit-limit"
             v-model.number="form.creditLimit" 
             type="number" 
-            min="0" 
             step="0.01" 
             class="input-field h-10 pl-7" 
             :class="{ 'border-red-300 focus:ring-red-500 focus:border-red-500': errors.some(e => e.includes('límite')) }"
@@ -133,7 +128,6 @@
             id="debt-balance"
             v-model.number="form.balance" 
             type="number" 
-            min="0" 
             step="0.01" 
             class="input-field h-10 pl-7" 
             :class="{ 'border-red-300 focus:ring-red-500 focus:border-red-500': errors.some(e => e.includes('saldo')) }"
@@ -149,8 +143,6 @@
             id="debt-interest"
             v-model.number="form.interesEfectivo" 
             type="number" 
-            min="0" 
-            max="100" 
             step="0.01" 
             class="input-field h-10 pr-8" 
             :class="{ 'border-red-300 focus:ring-red-500 focus:border-red-500': errors.some(e => e.includes('interés')) }"
@@ -232,12 +224,48 @@ const validateForm = () => {
     newErrors.push('El nombre es requerido')
   }
   
+  if (!form.issuer?.trim()) {
+    newErrors.push('El emisor es requerido')
+  }
+  
+  if (!form.brand?.trim()) {
+    newErrors.push('El tipo de tarjeta es requerido')
+  }
+  
+  if (!form.maskPan?.trim()) {
+    newErrors.push('Los últimos 4 dígitos son requeridos')
+  }
+  
+  if (!form.cutOffDay) {
+    newErrors.push('El día de corte es requerido')
+  }
+  
+  if (!form.dueDay) {
+    newErrors.push('El día de pago es requerido')
+  }
+  
+  if (form.creditLimit === undefined || form.creditLimit === null || form.creditLimit === '') {
+    newErrors.push('El límite de crédito es requerido')
+  }
+  
+  if (form.balance === undefined || form.balance === null || form.balance === '') {
+    newErrors.push('El saldo actual es requerido')
+  }
+  
+  if (form.interesEfectivo === undefined || form.interesEfectivo === null || form.interesEfectivo === '') {
+    newErrors.push('El interés efectivo es requerido')
+  }
+  
   if (form.creditLimit < 0) {
     newErrors.push('El límite de crédito debe ser mayor o igual a 0')
   }
   
   if (form.balance < 0) {
     newErrors.push('El saldo debe ser mayor o igual a 0')
+  }
+  
+  if (form.balance > form.creditLimit && form.creditLimit > 0) {
+    newErrors.push('El saldo no puede ser mayor al límite de crédito')
   }
   
   if (form.dueDay && (form.dueDay < 1 || form.dueDay > 31)) {
@@ -248,15 +276,20 @@ const validateForm = () => {
     newErrors.push('El día de corte debe estar entre 1 y 31')
   }
   
+  // Validación: día de corte y pago no pueden ser el mismo día
+  if (form.cutOffDay && form.dueDay && form.cutOffDay === form.dueDay) {
+    newErrors.push('El día de corte y el día de pago no pueden ser el mismo día')
+  }
+  
   if (form.interesEfectivo != null && (form.interesEfectivo < 0 || form.interesEfectivo > 100)) {
     newErrors.push('El interés efectivo debe estar entre 0 y 100')
   }
   
-  if (form.maskPan && form.maskPan.length !== 4) {
+  if (form.maskPan && form.maskPan.length > 0 && form.maskPan.length !== 4) {
     newErrors.push('Los últimos 4 dígitos deben ser exactamente 4 números')
   }
   
-  if (form.maskPan && !/^\d{4}$/.test(form.maskPan)) {
+  if (form.maskPan && form.maskPan.length > 0 && !/^\d{4}$/.test(form.maskPan)) {
     newErrors.push('Los últimos 4 dígitos solo pueden contener números')
   }
   
@@ -281,6 +314,31 @@ const validateLastFourDigits = (event) => {
     form.maskPan = numbersOnly.slice(0, 4)
   } else {
     form.maskPan = numbersOnly
+  }
+}
+
+// Validar días (máximo 2 dígitos)
+const validateDayInput = (event) => {
+  const input = event.target
+  const value = input.value
+  
+  // Solo permitir números
+  const numbersOnly = value.replace(/\D/g, '')
+  
+  // Limitar a 2 dígitos
+  if (numbersOnly.length > 2) {
+    const limitedValue = numbersOnly.slice(0, 2)
+    if (input.id === 'debt-cutoff-day') {
+      form.cutOffDay = parseInt(limitedValue)
+    } else if (input.id === 'debt-due-day') {
+      form.dueDay = parseInt(limitedValue)
+    }
+  } else {
+    if (input.id === 'debt-cutoff-day') {
+      form.cutOffDay = numbersOnly ? parseInt(numbersOnly) : undefined
+    } else if (input.id === 'debt-due-day') {
+      form.dueDay = numbersOnly ? parseInt(numbersOnly) : undefined
+    }
   }
 }
 

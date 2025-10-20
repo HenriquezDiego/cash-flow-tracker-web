@@ -3,16 +3,15 @@
     <!-- Visa -->
     <svg v-if="type === 'visa'" viewBox="0 0 40 24" fill="none">
       <rect width="40" height="24" rx="4" fill="white" stroke="#E5E7EB" stroke-width="1"/>
-      <!-- Visa Logo -->
-      <g transform="translate(6, 8)">
-        <!-- V de Visa -->
-        <path d="M2 2h2l-1 4 1-4h2L4 10H2L1 6L2 2z" fill="#1A1F71"/>
-        <!-- I de Visa -->
-        <rect x="7" y="2" width="2" height="8" fill="#1A1F71"/>
-        <!-- S de Visa -->
-        <path d="M11 2h3c1.1 0 2 .9 2 2v1c0 .6-.4 1-1 1h-2v1h2c.6 0 1 .4 1 1v1c0 1.1-.9 2-2 2h-3V2zm2 2v1h1c.6 0 1-.4 1-1s-.4-1-1-1h-1zm0 3h1c.6 0 1 .4 1 1s-.4 1-1 1h-1V7z" fill="#1A1F71"/>
-        <!-- A de Visa -->
-        <path d="M18 10L16 2h2l1 4 1-4h2l-2 8h-2zm1-3l-1-3-1 3h2z" fill="#1A1F71"/>
+      <!-- Visa Logo con círculo azul -->
+      <g transform="translate(20, 12)">
+        <!-- Círculo azul más grande -->
+        <circle cx="0" cy="0" r="10" fill="#1A1F71"/>
+        
+        <!-- Texto VISA centrado y ajustado -->
+        <text x="0" y="3" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="white" letter-spacing="0.3px">
+          VISA
+        </text>
       </g>
     </svg>
 
