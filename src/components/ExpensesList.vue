@@ -41,12 +41,56 @@
       </div>
     </div>
 
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 space-y-2 sm:space-y-0">
-      <h2 class="text-base sm:text-lg font-semibold text-gray-900">
-        Gastos del Mes Actual
-      </h2>
-      <div class="text-xs sm:text-sm text-gray-500">
-        {{ format(new Date(), 'MMMM yyyy', { locale: es }) }}
+    <div class="mb-6 sm:mb-8">
+      <!-- Mobile: Dos columnas -->
+      <div class="sm:hidden grid grid-cols-2 gap-3">
+        <div class="flex items-start gap-3">
+          <div class="w-1 h-8 bg-gradient-to-b from-primary-500 to-primary-600 rounded-full shadow-sm mt-1"></div>
+          <div class="min-w-0 flex-1">
+            <h2 class="text-lg font-bold text-gray-900 capitalize tracking-tight">
+              {{ format(new Date(), 'MMMM yyyy', { locale: es }) }}
+            </h2>
+            <p class="text-xs text-gray-500 mt-0.5">Resumen del mes</p>
+          </div>
+        </div>
+        <div class="flex items-start justify-end">
+          <div class="text-right">
+            <div class="text-sm font-semibold text-gray-900">
+              {{ currentMonthExpenses.length }} registros
+            </div>
+            <div class="text-xs text-gray-500 mt-0.5">
+              ${{ totalSpent.toLocaleString('es-ES', { minimumFractionDigits: 2 }) }}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Desktop: Una fila -->
+      <div class="hidden sm:flex sm:justify-between sm:items-center">
+        <div class="flex items-center gap-3">
+          <div class="w-1 h-8 bg-gradient-to-b from-primary-500 to-primary-600 rounded-full shadow-sm"></div>
+          <div>
+            <h2 class="text-xl font-bold text-gray-900 capitalize tracking-tight">
+              {{ format(new Date(), 'MMMM yyyy', { locale: es }) }}
+            </h2>
+            <p class="text-xs text-gray-500 mt-0.5">Resumen de gastos del mes</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="text-right">
+            <div class="text-sm font-semibold text-gray-900">
+              {{ currentMonthExpenses.length }} registros
+            </div>
+            <div class="text-xs text-gray-500">
+              Total: ${{ totalSpent.toLocaleString('es-ES', { minimumFractionDigits: 2 }) }}
+            </div>
+          </div>
+          <div class="w-8 h-8 bg-primary-50 rounded-full flex items-center justify-center">
+            <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -638,7 +682,7 @@
       <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-2 sm:space-y-0">
         <span class="text-sm font-medium text-gray-700 text-center sm:text-left">Total:</span>
         <span class="text-xl sm:text-2xl font-bold text-gray-900 text-center sm:text-right">
-          ${{ filteredTotalsSimple.totalAll.toLocaleString('es-ES', { minimumFractionDigits: 2 }) }}
+          ${{ filteredTotalAmount.toLocaleString('es-ES', { minimumFractionDigits: 2 }) }}
         </span>
       </div>
 
@@ -782,6 +826,11 @@ const {
 
 const currentMonthExpenses = computed(() => expenseStore.currentMonthExpenses)
 const totalSpent = computed(() => expenseStore.totalSpent)
+
+// Total del mes actual (igual que el total de abajo, incluye todos los gastos)
+const currentMonthTotal = computed(() => {
+  return currentMonthExpenses.value.reduce((sum, expense) => sum + (Number(expense.amount) || 0), 0)
+})
 // Total de gastos filtrados usando función centralizada (excluye abonos automáticamente)
 const filteredTotalAmount = computed(() => {
   return calculateExpensesTotal(filteredExpenses.value)
