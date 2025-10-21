@@ -29,7 +29,7 @@
           <div class="flex justify-center mb-2">
             <p class="text-sm text-blue-700 font-medium">Presupuesto</p>
           </div>
-          <p :class="[amountTextClass, 'text-blue-900']">
+          <p :class="[`text-${amountSize}`, 'font-bold', 'text-blue-900']">
             ${{ budget.amount.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
           </p>
         </div>
@@ -41,7 +41,7 @@
             </svg>
           </div>
           <p class="text-sm text-orange-700 font-medium mb-2">Gastado</p>
-          <p :class="[amountTextClass, totalSpent > budget.amount ? 'text-red-600' : 'text-orange-900']">
+          <p :class="[`text-${amountSize}`, 'font-bold', totalSpent > budget.amount ? 'text-red-600' : 'text-orange-900']">
             ${{ totalSpent.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
           </p>
         </div>
@@ -53,7 +53,7 @@
             </svg>
           </div>
           <p class="text-sm text-green-700 font-medium mb-2">Restante</p>
-          <p :class="[amountTextClass, remainingBudget > 0 ? 'text-green-600' : 'text-red-600']">
+          <p :class="[`text-${amountSize}`, 'font-bold', remainingBudget > 0 ? 'text-green-600' : 'text-red-600']">
             ${{ remainingBudget.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
           </p>
         </div>

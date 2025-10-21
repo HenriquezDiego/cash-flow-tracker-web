@@ -5,7 +5,7 @@
       <div class="flex items-center justify-between">
         <div class="flex-1 min-w-0">
           <p class="text-xs sm:text-sm font-medium text-red-600 truncate">Total Gastos</p>
-          <p class="text-lg sm:text-2xl font-bold text-red-900 truncate">
+          <p class="text-base sm:text-lg font-bold text-red-900 truncate">
             ${{ totalSpent.toLocaleString('es-ES', { minimumFractionDigits: 2 }) }}
           </p>
           <p class="text-xs text-red-600 mt-1 truncate">{{ expensesCount }} transacciones</p>
@@ -23,7 +23,7 @@
       <div class="flex items-center justify-between">
         <div class="flex-1 min-w-0">
           <p class="text-xs sm:text-sm font-medium text-green-600 truncate">Presupuesto Restante</p>
-          <p class="text-lg sm:text-2xl font-bold text-green-900 truncate">
+          <p class="text-base sm:text-lg font-bold text-green-900 truncate">
             ${{ remainingBudget.toLocaleString('es-ES', { minimumFractionDigits: 2 }) }}
           </p>
           <p class="text-xs text-green-600 mt-1 truncate">{{ budgetProgress.toFixed(1) }}% utilizado</p>
@@ -41,7 +41,7 @@
       <div class="flex items-center justify-between">
         <div class="flex-1 min-w-0">
           <p class="text-xs sm:text-sm font-medium text-blue-600 truncate">Promedio Diario</p>
-          <p class="text-lg sm:text-2xl font-bold text-blue-900 truncate">
+          <p class="text-base sm:text-lg font-bold text-blue-900 truncate">
             ${{ averageDaily.toLocaleString('es-ES', { minimumFractionDigits: 2 }) }}
           </p>
           <p class="text-xs text-blue-600 mt-1 truncate">Este mes</p>
@@ -59,7 +59,7 @@
       <div class="flex items-center justify-between">
         <div class="flex-1 min-w-0">
           <p class="text-xs sm:text-sm font-medium text-purple-600 truncate">Gastos Fijos</p>
-          <p class="text-lg sm:text-2xl font-bold text-purple-900 truncate">
+          <p class="text-base sm:text-lg font-bold text-purple-900 truncate">
             ${{ totalFixedExpenses.toLocaleString('es-ES', { minimumFractionDigits: 2 }) }}
           </p>
           <p class="text-xs text-purple-600 mt-1 truncate">{{ fixedExpensesCount }} gastos</p>
