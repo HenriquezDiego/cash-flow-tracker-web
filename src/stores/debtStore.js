@@ -202,6 +202,12 @@ export const useDebtStore = defineStore('debt', () => {
 
   const clearError = () => { error.value = null }
 
+  const clearData = () => {
+    debts.value = []
+    loading.value = false
+    error.value = null
+  }
+
   return {
     // State
     debts,
@@ -222,6 +228,7 @@ export const useDebtStore = defineStore('debt', () => {
     fetchDebtSummary,
     fetchDebtInstallments,
     clearError,
+    clearData,
     validateDebtData
   }
 })

@@ -658,6 +658,16 @@ export const useExpenseStore = defineStore('expense', () => {
     error.value = null
   }
 
+  const clearData = () => {
+    expenses.value = []
+    categories.value = []
+    budget.value = { amount: 0, month: '' }
+    budgetsByMonth.value = {}
+    fixedExpenses.value = []
+    loading.value = false
+    error.value = null
+  }
+
   return {
     // State
     expenses,
@@ -701,6 +711,7 @@ export const useExpenseStore = defineStore('expense', () => {
     deleteFixedExpense,
     generateFixedExpensesForMonth,
     generateFixedExpensesForMonthLocal,
-    clearError
+    clearError,
+    clearData
   }
 })

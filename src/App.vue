@@ -273,6 +273,48 @@ watch(() => route.path, () => {
   userAuthenticated.value = isAuthenticated()
 })
 
+// Watcher para detectar cambios en el estado de autenticación
+watch(userAuthenticated, async (newValue, oldValue) => {
+  // Si el usuario se acaba de autenticar (cambió de false a true)
+  if (newValue && !oldValue) {
+    console.log('🔐 Usuario autenticado, cargando datos...')
+    
+    // Iniciar sistema de auto-refresh del token
+    if (stopTokenRefresh) {
+      stopTokenRefresh() // Limpiar timer anterior si existe
+    }
+    stopTokenRefresh = startTokenRefreshTimer()
+    
+    // Cargar datos de la aplicación
+    try {
+      await Promise.all([
+        expenseStore.loadExpenses(),
+        expenseStore.loadCategories(),
+        expenseStore.loadBudget(),
+        expenseStore.loadFixedExpenses(),
+        debtStore.loadDebts()
+      ])
+      console.log('✅ Datos cargados exitosamente después del login')
+    } catch (error) {
+      console.error('❌ Error cargando datos después del login:', error)
+    }
+  }
+  // Si el usuario se deslogueó (cambió de true a false)
+  else if (!newValue && oldValue) {
+    console.log('🚪 Usuario deslogueado, limpiando datos...')
+    
+    // Limpiar timer de auto-refresh
+    if (stopTokenRefresh) {
+      stopTokenRefresh()
+      stopTokenRefresh = null
+    }
+    
+    // Limpiar datos de los stores
+    expenseStore.clearData()
+    debtStore.clearData()
+  }
+})
+
 // Funciones para manejar el menú mobile
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value
