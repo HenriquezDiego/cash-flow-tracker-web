@@ -141,9 +141,15 @@
                 <!-- Toggle gasto fijo (checkbox estilizado) -->
                 <div class="p-3 bg-gray-50 rounded-lg">
                   <label class="inline-flex items-center gap-2 select-none">
-                    <input v-model="form.isFixed" type="checkbox" class="peer sr-only" />
-                    <span class="w-10 h-6 rounded-full bg-gray-200 peer-checked:bg-primary-600 relative transition-colors">
-                      <span class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4"></span>
+                    <input v-model="form.isFixed" type="checkbox" class="sr-only" />
+                    <span 
+                      class="w-10 h-6 rounded-full relative transition-colors duration-200"
+                      :class="form.isFixed ? 'bg-primary-600' : 'bg-gray-200'"
+                    >
+                      <span 
+                        class="absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200"
+                        :class="form.isFixed ? 'left-5' : 'left-1'"
+                      ></span>
                     </span>
                     <span class="text-sm font-medium text-gray-700">Es un gasto fijo</span>
                     <span class="text-xs text-gray-500">Se repite cada mes</span>
@@ -181,9 +187,15 @@
 
                 <div class="p-3 bg-gray-50 rounded-lg">
                   <label class="inline-flex items-center gap-2 select-none">
-                    <input v-model="form.isCredit" type="checkbox" class="peer sr-only" />
-                    <span class="w-10 h-6 rounded-full bg-gray-200 peer-checked:bg-primary-600 relative transition-colors">
-                      <span class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4"></span>
+                    <input v-model="form.isCredit" type="checkbox" class="sr-only" />
+                    <span 
+                      class="w-10 h-6 rounded-full relative transition-colors duration-200"
+                      :class="form.isCredit ? 'bg-primary-600' : 'bg-gray-200'"
+                    >
+                      <span 
+                        class="absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200"
+                        :class="form.isCredit ? 'left-5' : 'left-1'"
+                      ></span>
                     </span>
                     <span class="text-sm font-medium text-gray-700">Cargar a tarjeta</span>
                   </label>
