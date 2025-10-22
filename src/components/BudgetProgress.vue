@@ -20,54 +20,22 @@
 
       <!-- Información del presupuesto -->
       <div :class="gridColsClass">
-        <div class="text-center p-4 bg-blue-50 rounded-lg border border-blue-100">
-          <div class="w-10 h-10 bg-blue-400 rounded-lg flex items-center justify-center mx-auto mb-3">
+        <div 
+          v-for="card in budgetCards" 
+          :key="card.id"
+          v-show="card.show"
+          :class="[card.bgClass, card.borderClass, 'text-center p-4 rounded-lg border']"
+        >
+          <div :class="[card.iconBgClass, 'w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-3']">
             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="card.iconPath" />
             </svg>
           </div>
           <div class="flex justify-center mb-2">
-            <p class="text-sm text-blue-700 font-medium">Presupuesto</p>
+            <p :class="[card.labelClass, 'text-sm font-medium']">{{ card.label }}</p>
           </div>
-          <p :class="[`text-${amountSize}`, 'font-bold', 'text-blue-900']">
-            ${{ budget.amount.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
-          </p>
-        </div>
-        
-        <div class="text-center p-4 bg-orange-50 rounded-lg border border-orange-100">
-          <div class="w-10 h-10 bg-orange-400 rounded-lg flex items-center justify-center mx-auto mb-3">
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-            </svg>
-          </div>
-          <p class="text-sm text-orange-700 font-medium mb-2">Gastado</p>
-          <p :class="[`text-${amountSize}`, 'font-bold', totalSpent > budget.amount ? 'text-red-600' : 'text-orange-900']">
-            ${{ totalSpent.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
-          </p>
-        </div>
-        
-        <div class="text-center p-4 bg-green-50 rounded-lg border border-green-100">
-          <div class="w-10 h-10 bg-green-400 rounded-lg flex items-center justify-center mx-auto mb-3">
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-            </svg>
-          </div>
-          <p class="text-sm text-green-700 font-medium mb-2">Restante</p>
-          <p :class="[`text-${amountSize}`, 'font-bold', remainingBudget > 0 ? 'text-green-600' : 'text-red-600']">
-            ${{ remainingBudget.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
-          </p>
-        </div>
-
-        <!-- Cargos de crédito del periodo (solo informativo) -->
-        <div v-if="showCredits" class="text-center p-4 bg-purple-50 rounded-lg border border-purple-100">
-          <div class="w-10 h-10 bg-purple-400 rounded-lg flex items-center justify-center mx-auto mb-3">
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-            </svg>
-          </div>
-          <p class="text-sm text-purple-700 font-medium mb-2">Cargos de crédito</p>
-          <p :class="[amountTextClass, 'text-purple-900']">
-            ${{ totalCreditCharges.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
+          <p :class="[amountTextClass, card.amountClass, 'whitespace-nowrap']">
+            {{ formatAmount(card.amount) }}
           </p>
         </div>
       </div>
@@ -100,7 +68,7 @@
 import { computed } from 'vue'
 import { useExpenseStore } from '../stores/expenseStore'
 import { parseLocalDate } from '../utils/date'
-import { calculateExpensesTotal, getActualExpenses } from '../utils/expenseCalculations'
+import { calculateExpensesTotal } from '../utils/expenseCalculations'
 
 const props = defineProps({
   amountSize: {
@@ -175,7 +143,6 @@ const isOverBudget = computed(() => {
   return budgetAmount.value > 0 && totalSpent.value > budgetAmount.value
 })
 
-// (sin cómputo extra: usamos totalSpent que ya excluye cargos de crédito)
 
 // Total de cargos de crédito (entryType==='charge') en el periodo
 const totalCreditCharges = computed(() => {
@@ -193,7 +160,7 @@ const progressBarClass = computed(() => {
 
 const amountTextClass = computed(() => {
   const sizeMap = {
-    sm: 'text-sm',
+    sm: 'text-xs', // Más pequeño para pantalla de gastos
     base: 'text-base', 
     lg: 'text-lg',
     xl: 'text-xl',
@@ -207,5 +174,77 @@ const gridColsClass = computed(() => {
   return props.showCredits
     ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'
     : 'grid grid-cols-1 sm:grid-cols-3 gap-4'
+})
+
+// Función para formatear montos grandes
+const formatAmount = (amount) => {
+  const num = Number(amount)
+  
+  // Para montos muy grandes (millones) - 7+ dígitos
+  if (num >= 1000000) {
+    return `$${(num / 1000000).toFixed(1)}M`
+  }
+  
+  // Para montos grandes (miles) - 6+ dígitos (100,000+)
+  if (num >= 100000) {
+    return `$${(num / 1000).toFixed(1)}K`
+  }
+  
+  // Para montos normales (hasta 5 dígitos), usar formato estándar
+  return `$${num.toLocaleString('en-US', { minimumFractionDigits: 2 })}`
+}
+
+// Datos de las tarjetas del presupuesto
+const budgetCards = computed(() => {
+  return [
+    {
+      id: 'budget',
+      show: true,
+      label: 'Presupuesto',
+      amount: budget.value.amount,
+      bgClass: 'bg-blue-50',
+      borderClass: 'border-blue-100',
+      iconBgClass: 'bg-blue-400',
+      labelClass: 'text-blue-700',
+      amountClass: 'text-blue-900',
+      iconPath: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'
+    },
+    {
+      id: 'spent',
+      show: true,
+      label: 'Gastado',
+      amount: totalSpent.value,
+      bgClass: 'bg-orange-50',
+      borderClass: 'border-orange-100',
+      iconBgClass: 'bg-orange-400',
+      labelClass: 'text-orange-700',
+      amountClass: totalSpent.value > budget.value.amount ? 'text-red-600' : 'text-orange-900',
+      iconPath: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1'
+    },
+    {
+      id: 'remaining',
+      show: true,
+      label: 'Restante',
+      amount: remainingBudget.value,
+      bgClass: 'bg-green-50',
+      borderClass: 'border-green-100',
+      iconBgClass: 'bg-green-400',
+      labelClass: 'text-green-700',
+      amountClass: remainingBudget.value > 0 ? 'text-green-600' : 'text-red-600',
+      iconPath: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1'
+    },
+    {
+      id: 'credits',
+      show: props.showCredits,
+      label: 'Cargos de crédito',
+      amount: totalCreditCharges.value,
+      bgClass: 'bg-purple-50',
+      borderClass: 'border-purple-100',
+      iconBgClass: 'bg-purple-400',
+      labelClass: 'text-purple-700',
+      amountClass: 'text-purple-900',
+      iconPath: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z'
+    }
+  ]
 })
 </script>

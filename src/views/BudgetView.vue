@@ -181,6 +181,9 @@ const currentYear = computed(() => yearCursor.value.getFullYear())
 const monthLabels = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
 
 const isLoadingBudgets = ref(false)
+// Variable para almacenar la referencia de la función
+let resizeHandler = null
+
 onMounted(async () => {
   isLoadingBudgets.value = true
   await expenseStore.loadBudgets()
@@ -188,11 +191,15 @@ onMounted(async () => {
   
   // Configurar visibilidad del botón
   updateScreenSize()
-  window.addEventListener('resize', updateScreenSize)
+  resizeHandler = updateScreenSize
+  window.addEventListener('resize', resizeHandler)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', updateScreenSize)
+  if (resizeHandler) {
+    window.removeEventListener('resize', resizeHandler)
+    resizeHandler = null
+  }
 })
 
 const ym = (y, mIdx) => `${y}-${String(mIdx + 1).padStart(2,'0')}`
