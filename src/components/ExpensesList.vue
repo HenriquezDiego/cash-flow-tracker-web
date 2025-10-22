@@ -494,7 +494,6 @@
           <ul class="text-xs space-y-1">
             <li>• El botón flotante en la esquina</li>
             <li>• El menú de navegación</li>
-            <li>• Atajo de teclado: <kbd class="px-1 py-0.5 bg-gray-100 rounded text-xs">Ctrl + N</kbd></li>
           </ul>
         </div>
       </div>
