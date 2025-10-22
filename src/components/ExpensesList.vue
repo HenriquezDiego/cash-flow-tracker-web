@@ -760,7 +760,7 @@ import { useExpenseFilters } from '../composables/useExpenseFilters'
 
 const expenseStore = useExpenseStore()
 const confirm = useConfirm()
-const emit = defineEmits(['edit-expense', 'delete-expense'])
+const emit = defineEmits(['edit-expense', 'delete-expense', 'add-expense'])
 
 // Usar el composable de filtros
 const {

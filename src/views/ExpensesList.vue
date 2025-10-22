@@ -30,6 +30,7 @@
           ref="expensesListRef" 
           @edit-expense="openEdit" 
           @delete-expense="confirmDelete"
+          @add-expense="openAddExpense"
           :class="{
             // Mobile: ocultar si no está en tab de gastos
             'hidden lg:block': activeTab !== 'expenses'
