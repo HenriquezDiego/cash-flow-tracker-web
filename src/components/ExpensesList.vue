@@ -1,45 +1,5 @@
 <template>
-  <div 
-    ref="pullToRefreshContainer"
-    class="card relative"
-    @touchstart="onPullStart"
-    @touchmove="onPullMove"
-    @touchend="onPullEnd"
-  >
-    <!-- Pull-to-refresh indicator (solo móvil) -->
-    <div 
-      v-if="isMobile && (isPulling || isRefreshing)"
-      class="absolute top-0 left-0 right-0 flex items-center justify-center py-4 bg-white/90 backdrop-blur-sm z-10 transition-all duration-200"
-      :style="{ 
-        transform: `translateY(${Math.max(0, pullDistance - 20)}px)`,
-        opacity: Math.min(1, pullDistance / 40)
-      }"
-    >
-      <div class="flex items-center gap-2 text-gray-600">
-        <svg 
-          v-if="!isRefreshing"
-          class="w-5 h-5 transition-transform duration-200"
-          :style="{ transform: `rotate(${Math.min(180, pullDistance * 2)}deg)` }"
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-        </svg>
-        <svg 
-          v-else
-          class="w-5 h-5 animate-spin" 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-        </svg>
-        <span class="text-sm font-medium">
-          {{ isRefreshing ? 'Actualizando...' : pullDistance >= pullThreshold ? 'Suelta para actualizar' : 'Desliza para actualizar' }}
-        </span>
-      </div>
-    </div>
+  <div class="card">
 
     <div class="mb-6 sm:mb-8">
       <!-- Mobile: Dos columnas -->
@@ -947,14 +907,6 @@ onUnmounted(() => {
 const infiniteScrollTrigger = ref(null)
 const intersectionObserver = ref(null)
 
-// Pull-to-refresh
-const pullToRefreshContainer = ref(null)
-const isPulling = ref(false)
-const pullDistance = ref(0)
-const isRefreshing = ref(false)
-const pullThreshold = 80
-const maxPullDistance = 120
-const pullStartY = ref(0)
 const isMobile = ref(false)
 
 // Trigger para forzar re-render cuando cambia el tamaño de pantalla
@@ -973,62 +925,6 @@ const onLoadMore = async () => {
   loadingMore.value = false
 }
 
-// Pull-to-refresh functions
-const onPullStart = (e) => {
-  if (!isMobile.value || window.scrollY > 0 || isRefreshing.value) return
-  isPulling.value = true
-  pullDistance.value = 0
-  pullStartY.value = e.touches[0].clientY
-}
-
-const onPullMove = (e) => {
-  if (!isMobile.value || !isPulling.value || isRefreshing.value) return
-  
-  const currentY = e.touches[0].clientY
-  const deltaY = currentY - pullStartY.value
-  
-  if (deltaY > 0) {
-    e.preventDefault()
-    const distance = Math.min(deltaY, maxPullDistance)
-    pullDistance.value = distance
-  }
-}
-
-const onPullEnd = async () => {
-  if (!isMobile.value || !isPulling.value || isRefreshing.value) return
-  
-  isPulling.value = false
-  
-  if (pullDistance.value >= pullThreshold) {
-    await refreshData()
-  }
-  
-  pullDistance.value = 0
-}
-
-const refreshData = async () => {
-  if (isRefreshing.value) return
-  
-  isRefreshing.value = true
-  
-  try {
-    // Recargar los gastos y categorías
-    await Promise.all([
-      expenseStore.loadExpenses(),
-      expenseStore.loadCategories()
-    ])
-    
-    // Reset pagination
-    shownCount.value = pageSize.value
-    
-    // Small delay to show the refresh animation
-    await new Promise(resolve => setTimeout(resolve, 500))
-  } catch (error) {
-    console.error('Error refreshing data:', error)
-  } finally {
-    isRefreshing.value = false
-  }
-}
 
 // Infinite scroll setup (solo para mobile)
 const setupInfiniteScroll = () => {
