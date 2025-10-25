@@ -39,13 +39,7 @@
                       <p class="text-blue-100 text-xs">{{ creditData?.issuer || 'Sin emisor' }}</p>
                     </div>
                   </div>
-                  <div class="flex items-center space-x-2">
-                    <span :class="[
-                      'px-2.5 py-0.5 rounded-full text-xs font-medium',
-                      creditData?.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                    ]">
-                      {{ creditData?.active ? 'Activa' : 'Inactiva' }}
-                    </span>
+                  <div class="flex items-center">
                     <button
                       @click="$emit('close')"
                       class="text-white/80 hover:text-white transition-colors duration-200"
@@ -64,7 +58,7 @@
                   <!-- Tarjeta Visual - Compacta y Centrada -->
                   <div class="flex items-center justify-center">
                     <!-- Credit Card - Tamaño Reducido -->
-                    <div class="relative text-white shadow-2xl overflow-hidden rounded-xl p-2.5 sm:p-3 w-full max-w-sm"
+                    <div class="relative text-white shadow-2xl overflow-hidden rounded-xl p-2.5 sm:p-3 w-full"
                          :class="[
                            getCardGradient(creditData?.brand),
                            'aspect-[3.375/2.125]'
@@ -207,25 +201,15 @@
                       </div>
                     </div>
 
-                    <!-- Métricas Rápidas -->
+                    <!-- Métricas Rápidas - Saldo y Disponible -->
                     <div class="grid grid-cols-2 gap-2">
                       <div class="bg-white rounded-lg p-2 border border-gray-200">
-                        <p class="text-xs text-gray-500 mb-0.5">Saldo Actual</p>
+                        <p class="text-xs text-gray-500 mb-0.5">Saldo</p>
                         <p class="text-base font-bold text-gray-900">{{ formatCurrency(creditData?.balance || 0) }}</p>
-                      </div>
-                      <div class="bg-white rounded-lg p-2 border border-gray-200">
-                        <p class="text-xs text-gray-500 mb-0.5">Límite</p>
-                        <p class="text-base font-bold text-gray-900">{{ formatCurrency(creditData?.creditLimit || 0) }}</p>
                       </div>
                       <div class="bg-white rounded-lg p-2 border border-gray-200">
                         <p class="text-xs text-gray-500 mb-0.5">Disponible</p>
                         <p class="text-base font-bold text-green-600">{{ formatCurrency((creditData?.creditLimit || 0) - (creditData?.balance || 0)) }}</p>
-                      </div>
-                      <div class="bg-white rounded-lg p-2 border border-gray-200">
-                        <p class="text-xs text-gray-500 mb-0.5">Utilización</p>
-                        <p class="text-base font-bold" :class="getUtilizationColor(creditData?.balance, creditData?.creditLimit)">
-                          {{ getUtilizationPercentage(creditData?.balance, creditData?.creditLimit) }}%
-                        </p>
                       </div>
                     </div>
 
