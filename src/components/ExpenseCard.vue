@@ -413,7 +413,7 @@ const getDayOfMonth = (fixedExpenseId) => {
   const paymentDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayOfMonth)
   
   // Formatear la fecha en español
-  return format(paymentDate, 'EEEE d \'de\' MMMM', { locale: es })
+  return format(paymentDate, 'EEEE dd \'de\' MMMM', { locale: es })
 }
 
 // Identificar gasto de crédito (nuevo criterio: por debtId)

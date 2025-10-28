@@ -154,7 +154,7 @@ export function useExpenseFilters(expenseStore) {
       .sort((a, b) => (sortOrder.value === 'asc' ? a.localeCompare(b) : b.localeCompare(a)))
       .map(key => ({
         key,
-        label: format(parseLocalDate(key), 'EEEE d "de" MMMM', { locale: es }),
+        label: format(parseLocalDate(key), 'EEEE dd \'de\' MMMM', { locale: es }),
         items: groups[key]
       }))
   })
