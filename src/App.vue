@@ -71,18 +71,12 @@
               Resumen
             </router-link>
             
-            <!-- Botón de Logout -->
+            <!-- Perfil de usuario -->
             <div class="ml-2 pl-2 border-l border-gray-200">
-              <button
-                @click="handleLogout"
-                class="flex items-center px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                role="menuitem"
-              >
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                Salir
-              </button>
+              <UserProfile 
+                :user-email="userEmail"
+                @logout="handleLogout"
+              />
             </div>
           </div>
 
@@ -245,12 +239,13 @@
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
+import { onMounted, onBeforeUnmount, ref, watch, computed } from 'vue'
 import { Notivue, Notification } from 'notivue'
 import ConfirmDialog from './components/ui/ConfirmDialog.vue'
+import UserProfile from './components/UserProfile.vue'
 import { useExpenseStore } from './stores/expenseStore'
 import { useDebtStore } from './stores/debtStore'
-import { logout, isAuthenticated, startTokenRefreshTimer } from './services/auth.js'
+import { logout, isAuthenticated, startTokenRefreshTimer, getUserInfo } from './services/auth.js'
 import { useRouter, useRoute } from 'vue-router'
 
 const expenseStore = useExpenseStore()
@@ -261,6 +256,12 @@ const appTitle = ref(import.meta.env.VITE_APP_TITLE)
 
 // Estado de autenticación
 const userAuthenticated = ref(isAuthenticated())
+
+// Información del usuario
+const userEmail = computed(() => {
+  const userInfo = getUserInfo()
+  return userInfo?.email || 'usuario@ejemplo.com'
+})
 
 // Estado del menú mobile
 const mobileMenuOpen = ref(false)
