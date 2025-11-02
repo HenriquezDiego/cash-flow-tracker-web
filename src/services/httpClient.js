@@ -41,22 +41,37 @@ export async function makeRequest(endpoint, options = {}) {
       headers
     })
 
+    console.log(`[HTTP] ${options.method || 'GET'} ${endpoint} - Status: ${response.status}`)
+
     if (!response.ok) {
-      // Manejar error 401 (no autorizado o token expirado)
-      if (response.status === 401) {
-        removeToken()
-        window.location.href = '/login'
-        throw new Error('Sesión expirada. Por favor inicia sesión nuevamente.')
-      }
-      
       let errorMessage = `Error ${response.status}: ${response.statusText}`
+      let errorData = null
+      
       try {
-        const data = await response.json()
-        errorMessage = data?.message || data?.error || errorMessage
+        errorData = await response.json()
+        errorMessage = errorData?.message || errorData?.error || errorMessage
       } catch {
         const text = await response.text()
         if (text) errorMessage = text
       }
+
+      console.error(`[HTTP Error] ${endpoint}:`, {
+        status: response.status,
+        message: errorMessage,
+        data: errorData
+      })
+
+      // Manejar error 401 (no autorizado o token expirado)
+      // Opción para prevenir redirección automática si se especifica
+      if (response.status === 401 && !options.skipAuthRedirect) {
+        removeToken()
+        window.location.href = '/login'
+        throw new Error('Sesión expirada. Por favor inicia sesión nuevamente.')
+      } else if (response.status === 401) {
+        // Si skipAuthRedirect está activo, solo lanzar el error sin redirigir
+        throw new Error(`Error de autenticación: ${errorMessage}`)
+      }
+      
       throw new Error(errorMessage)
     }
 

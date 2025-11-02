@@ -92,6 +92,18 @@
             Configuración
           </button>
 
+          <!-- Conectar Sheet -->
+          <button
+            @click="handleConnectSheet"
+            class="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
+            role="menuitem"
+          >
+            <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Conectar Sheet Existente
+          </button>
+
           <!-- Separador -->
           <div class="border-t border-gray-100 my-2"></div>
 
@@ -125,12 +137,23 @@
         @click="closeDropdown"
       ></div>
     </Transition>
+
+    <!-- Modal de conectar sheet -->
+    <ConnectSheetModal 
+      :is-open="showConnectSheetModal"
+      @close="showConnectSheetModal = false"
+      @connected="handleSheetConnected"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { logout } from '../services/auth.js'
+import ConnectSheetModal from './ConnectSheetModal.vue'
+import { notify } from '../services/notifications'
+import { useExpenseStore } from '../stores/expenseStore'
+import { useDebtStore } from '../stores/debtStore'
 
 // Props
 const props = defineProps({
@@ -145,6 +168,7 @@ const emit = defineEmits(['logout'])
 
 // Estado del dropdown
 const dropdownOpen = ref(false)
+const showConnectSheetModal = ref(false)
 
 // Métodos
 const toggleDropdown = () => {
@@ -165,6 +189,38 @@ const handleSettings = () => {
   closeDropdown()
   // Aquí podrías navegar a configuración
   console.log('Ir a configuración')
+}
+
+const handleConnectSheet = () => {
+  closeDropdown()
+  showConnectSheetModal.value = true
+}
+
+const handleSheetConnected = async (sheet) => {
+  notify.success(`Sheet "${sheet.name}" conectada exitosamente`, 'Conexión exitosa')
+  
+  // Recargar todos los datos de los stores después de conectar una nueva sheet
+  const expenseStore = useExpenseStore()
+  const debtStore = useDebtStore()
+  
+  try {
+    console.log('🔄 Recargando datos después de conectar nueva sheet...')
+    await Promise.all([
+      expenseStore.loadExpenses(),
+      expenseStore.loadCategories(),
+      expenseStore.loadBudget(),
+      expenseStore.loadFixedExpenses(),
+      debtStore.loadDebts()
+    ])
+    console.log('✅ Datos recargados exitosamente')
+    notify.info('Datos actualizados correctamente', 'Actualización completada')
+  } catch (error) {
+    console.error('❌ Error recargando datos:', error)
+    notify.error('Error al recargar los datos. Por favor, refresca la página.', 'Error de actualización')
+  }
+  
+  // Opcional: emitir evento para que el componente padre maneje la actualización
+  // emit('sheet-connected', sheet)
 }
 
 const handleLogout = () => {
